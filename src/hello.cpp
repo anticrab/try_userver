@@ -1,38 +1,22 @@
-#include "hello.hpp"
-
-#include <fmt/format.h>
-
+#include <userver/components/minimal_server_component_list.hpp>
 #include <userver/server/handlers/http_handler_base.hpp>
+#include <userver/utils/daemon_run.hpp>
 
-namespace service_template {
-
-namespace {
+namespace samples::hello {
 
 class Hello final : public userver::server::handlers::HttpHandlerBase {
-public:
-  static constexpr std::string_view kName = "handler-hello";
+ public:
+  // `kName` is used as the component name in static config
+  static constexpr std::string_view kName = "handler-hello-sample";
 
+  // Component is valid after construction and is able to accept requests
   using HttpHandlerBase::HttpHandlerBase;
 
   std::string HandleRequestThrow(
-      const userver::server::http::HttpRequest &request,
-      userver::server::request::RequestContext &) const override {
-    return service_template::SayHelloTo(request.GetArg("name"));
+      const userver::server::http::HttpRequest&,
+      userver::server::request::RequestContext&) const override {
+    return "Hello world!\n";
   }
 };
 
-} // namespace
-
-std::string SayHelloTo(std::string_view name) {
-  if (name.empty()) {
-    name = "unknown user";
-  }
-
-  return fmt::format("Hello, {}!\n", name);
-}
-
-void AppendHello(userver::components::ComponentList &component_list) {
-  component_list.Append<Hello>();
-}
-
-} // namespace service_template
+}  // namespace samples::hello
